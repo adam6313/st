@@ -1,0 +1,6 @@
+.env
+vendor/*/
+.vscode
+.DS_Store
+credentials.json
+dist/

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage
+  namespace: eagle-dev
+  labels:
+    app.kubernetes.io/version: v1.4.0
+    app.kubernetes.io/managed-by: yaml
+    app-env: dev
+    app: storage
+spec:
+  replicas: 1 
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+        app-env: dev
+        app: storage
+  template:
+    metadata:
+      labels:
+        app-env: dev
+        app: storage
+    spec:
+      containers:
+        - name: storage
+          image: harbor.dev-server.tyr/dev-eagle/storage:v1.4.0.beta.5
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 250m
+            limits:
+              memory: 250Mi
+              cpu: 250m
+          ports:
+            - containerPort: 5001
+              name: grpc-storage
+          args: 
+            - server
+            - -c
+            - consul-v2-consul-server.infra:8500
+            - -p
+            - "5000"
+            - "--mode=production"
+            - "-f"
+            - "/key/credentials.json"
+          volumeMounts:
+            - name: storage-key
+              mountPath: /key
+              readOnly: true
+      volumes:
+        - name: storage-key
+          secret:
+            secretName: storage-key
+      nodeSelector:
+        worktype: api

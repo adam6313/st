@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+    tags:
+      - "v*.*.*.beta"
+      - "v*.*.*.beta*"
+
+  release:
+    types:
+      - created
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    if: always() && success() || github.event_name == 'release'
+    #needs: test
+
+    steps:
+      #- name: Go env
+      #uses: actions/setup-go@v2
+      #with:
+      #go-version: 1.15.x
+      - name: Build The Docker Image
+        run: |
+          make \
+          build-in-docker \
+          TAG=v1.10.1 \
+          IMAGE_NAME=st \
+          DATE=123
