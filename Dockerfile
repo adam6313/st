@@ -21,7 +21,10 @@ FROM ubuntu:21.04
 ENV TZ Asia/Taipei
 
 
-RUN apt-get update && apt-get install -y wget && GRPC_HEALTH_PROBE_VERSION=v0.3.1 && apt-get install -y gnupg2  && \
+RUN apt update -y && \ 
+    apt install -y wget && \ 
+    apt install -y gnupg2 && \ 
+    GRPC_HEALTH_PROBE_VERSION=v0.3.1 && \
     wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
     chmod +x /bin/grpc_health_probe
 
